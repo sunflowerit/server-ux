@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record model="ir.ui.view" id="view_merge_object_form">
+        <field name="name">merge.object.form</field>
+        <field name="model">merge.object</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Object">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="model_id"/>
+                            <field name="model_list" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="ref_ir_act_server_fuse"
+                                   attrs="{'invisible':[('ref_ir_act_server_fuse','=',False)]}"/>
+                            <field name="ref_ir_value_fuse"
+                                   attrs="{'invisible':[('ref_ir_act_server_fuse','=',False)]}"/>
+                            <button name="create_action_fuse"
+                                   string="Add fuse sidebar button"
+                                   type="object"
+                                   attrs="{'invisible':[('ref_ir_act_server_fuse','!=',False)]}"
+                                   help="Display the button in the sidebar that fuses the selected elements"/>
+                            <button name="unlink_fuse_action"
+                                   string="Remove Fuse button"
+                                   type="object"
+                                   attrs="{'invisible':[('ref_ir_act_server_fuse','=',False)]}"
+                                    />
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="view_merge_object_tree">
+        <field name="name">merge.object.tree</field>
+        <field name="model">merge.object</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <tree string="Object">
+                <field name="name"/>
+                <field name="model_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="action_merge_object_form">
+        <field name="name">Mass Merge</field>
+        <field name="res_model">merge.object</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'tree', 'view_id': ref('view_merge_object_tree')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_merge_object_form')})]"/>
+    </record>
+
+    <menuitem id="menu_merge_editing" name="Mass Merge"
+              parent="base.menu_administration" sequence="6"/>
+
+    <menuitem id="menu_merge_object_view" action="action_merge_object_form"
+              parent="menu_merge_editing"/>
+
+</odoo>
