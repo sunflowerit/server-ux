@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record model="ir.ui.view" id="view_merge_fuse_wizard_form">
+        <field name="name">merge.fuse.wizard.form</field>
+        <field name="model">merge.fuse.wizard</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form>
+                <separator string="Records to be merged" colspan="6"/>
+                <div>The first record is the one that is being merged to; other records will be deleted!</div>
+                <field name="line_ids">
+                    <tree create="0" delete="0">
+                        <field name="sequence" widget="handle"/>
+                        <field name="ref"/>
+                    </tree>
+                </field>
+                <footer>
+                    <button string="Merge" class="btn-primary"
+                        type="object" name="action_apply"/>
+                    <button string="Cancel" special="cancel"/>
+                </footer>
+            </form>
+
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="action_merge_fuse_wizard_form">
+        <field name="name">Mass Merge Wizard</field>
+        <field name="res_model">merge.fuse.wizard</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_merge_fuse_wizard_form"/>
+    </record>
+
+</odoo>
