@@ -67,7 +67,6 @@ class MergeFuseWizard(models.TransientModel):
             'flags': {'action_buttons': False},
         }
 
-    @api.multi
     def action_apply(self):
         """ Perform the merge when 'Merge' button is pressed """
         self.ensure_one()
