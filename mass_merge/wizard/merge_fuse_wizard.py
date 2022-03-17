@@ -175,7 +175,42 @@ class MergeFuseWizard(models.TransientModel):
                         updates = {(target_field_name, base_record.id)}
                         self._do_sql_updates(
                             target_model._table, target_records.ids, updates)
-
         # delete records
         self.env.invalidate_all()
         to_merge_records.unlink()
+
+        # If products not same company, set them to same company before merging
+        records = base_record + to_merge_records
+        if 'company_id' in records._fields and \
+            len(records.mapped('company_id')) > 1:
+            to_merge_records.write(dict(company_id=base_record.company_id.id))
+
+        # If product is merged, merge template too and vice versa
+        # TODO: make generic for any _inherits relation eg. employee/resource
+        _super = super(MergeFuseWizard, self)._do_merge
+        if base_record._name == 'product.product':
+            field = 'product_tmpl_id'
+            dep_base_record = base_record.mapped(field)
+            dep_to_merge_records = to_merge_records.mapped(field)
+            _super(dep_base_record, dep_to_merge_records)
+            ret = _super(base_record, to_merge_records)
+        elif base_record._name == 'product.template':
+            field = 'product_variant_ids'
+            dep_base_record = base_record.mapped(field)
+            dep_to_merge_records = to_merge_records.mapped(field)
+            if len(dep_base_record) > 1:
+                raise ValidationError(_(
+                    'Record {} has {} variants, refusing to merge.'.format(
+                        base_record.display_name, len(dep_base_record)
+                    )))
+            if not dep_base_record and dep_to_merge_records:
+                raise ValidationError(_(
+                    'Record {} does not have variants'
+                    ', but the other records have. Cannot merge.'.format(
+                        base_record.display_name)))
+            ret = _super(base_record, to_merge_records)
+            if dep_to_merge_records:
+                ret = _super(dep_base_record, dep_to_merge_records)
+        else:
+            ret = _super(base_record, to_merge_records)
+            return ret
