@@ -20,6 +20,8 @@
         'security/ir.model.access.csv',
         'wizard/merge_fuse_wizard.xml',
         'views/merge_editing_view.xml',
+        'views/record_merge_id.xml',
+        'views/record_merge_criteria.xml',
     ],
     'installable': True,
     'application': True,
