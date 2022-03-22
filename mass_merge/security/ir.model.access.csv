@@ -1,2 +1,6 @@
 "id","name","model_id:id","group_id:id","perm_read","perm_write","perm_create","perm_unlink"
 "merge_manager","merge.object","model_merge_object","mass_merge.group_merge_editing",1,1,1,1
+"record_merge_manager","record.merge.id","model_record_merge_id","mass_merge.group_merge_editing",1,1,1,1
+"criteria_merge_manager","record.merge.criteria","model_record_merge_criteria","mass_merge.group_merge_editing",1,1,1,1
+"mixin_merge_manager","record.merge.mixin","model_record_merge_mixin","mass_merge.group_merge_editing",1,1,1,1
+"record_line_merge_manager","record.merge.id.line","model_record_merge_id_line","mass_merge.group_merge_editing",1,1,1,1
