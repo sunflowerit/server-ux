@@ -16,7 +16,7 @@ class MergeObject(models.Model):
         available on records of the related document\
         model")
     ref_ir_value_fuse = fields.Many2one(
-        'ir.values', 'Sidebar fuse button',
+        'ir.actions.server', 'Sidebar fuse button',
         readonly=True, help="Sidebar button to\
         open the sidebar action")
     model_list = fields.Char('Model List', size=256)
@@ -44,17 +44,21 @@ class MergeObject(models.Model):
             vals['ref_ir_act_server_fuse'] = action_obj.create({
                 'name': button_name,
                 'type': 'ir.actions.server',
-                'model_id': self.env.ref(
-                    'mass_merge.model_merge_fuse_wizard').id,
                 'state': 'code',
                 'code': 'action = model._get_wizard_action()',
-                'binding_model_id': self.env.ref(
+                'model_id': self.env.ref(
                     'mass_merge.model_merge_fuse_wizard').id,
-                'binding_type': 'report'
-
+            })
+            vals['ref_ir_value_fuse'] = action_obj.create({
+                'name': button_name,
+                'model_id': data.model_id.id,
+                'binding_model_id': data.model_id.id,
+                'binding_type': 'report',
             })
         self.write({
-            'ref_ir_act_server_fuse': vals.get('ref_ir_act_server_fuse', False).id
+            'ref_ir_act_server_fuse': vals.get('ref_ir_act_server_fuse', False).id,
+            'ref_ir_value_fuse': vals.get('ref_ir_value_fuse', False).id,
+
         })
         return True
 
@@ -65,7 +69,7 @@ class MergeObject(models.Model):
                     self.env['ir.actions.server'].search(
                         [('id', '=', template.ref_ir_act_server_fuse.id)]).unlink()
                 if template.ref_ir_value_fuse:
-                    ir_values_obj = self.env['ir.values']
+                    ir_values_obj = self.env['ir.actions.server']
                     ir_values_obj.search(
                         [('id', '=', template.ref_ir_value_fuse.id)]).unlink()
             except:

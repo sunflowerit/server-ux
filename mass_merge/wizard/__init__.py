@@ -6,3 +6,4 @@
 #   License GNU General Public License see <http://www.gnu.org/licenses/>
 
 from . import merge_fuse_wizard
+from . import base_merge_wizard
