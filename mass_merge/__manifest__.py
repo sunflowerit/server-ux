@@ -22,6 +22,7 @@
         'views/merge_editing_view.xml',
         'views/record_merge_id.xml',
         'views/record_merge_criteria.xml',
+        'views/base_merge_views.xml',
     ],
     'installable': True,
     'application': True,
