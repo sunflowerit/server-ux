@@ -16,9 +16,16 @@ class MergeObject(models.Model):
         available on records of the related document\
         model")
     ref_ir_value_fuse = fields.Many2one(
-        'ir.actions.server', 'Sidebar fuse button',
+        'ir.actions.act_window', 'Sidebar fuse button',
         readonly=True, help="Sidebar button to\
         open the sidebar action")
+    ref_ir_act_window_fuse = fields.Many2one(
+        "ir.actions.act_window",
+        "Sidebar fuse button",
+        readonly=True,
+        help="Sidebar button to\
+        open the sidebar action",
+    )
     model_list = fields.Char('Model List', size=256)
 
     @api.onchange('model_id')
@@ -48,17 +55,12 @@ class MergeObject(models.Model):
                 'code': 'action = model._get_wizard_action()',
                 'model_id': self.env.ref(
                     'mass_merge.model_merge_fuse_wizard').id,
-            })
-            vals['ref_ir_value_fuse'] = action_obj.create({
-                'name': button_name,
-                'model_id': data.model_id.id,
                 'binding_model_id': data.model_id.id,
-                'binding_type': 'report',
+                # 'binding_type': 'report',
             })
-        self.write({
-            'ref_ir_act_server_fuse': vals.get('ref_ir_act_server_fuse', False).id,
-            'ref_ir_value_fuse': vals.get('ref_ir_value_fuse', False).id,
 
+        self.write({
+            'ref_ir_act_server_fuse': vals.get('ref_ir_act_server_fuse', False).id
         })
         return True
 
@@ -68,10 +70,10 @@ class MergeObject(models.Model):
                 if template.ref_ir_act_server_fuse:
                     self.env['ir.actions.server'].search(
                         [('id', '=', template.ref_ir_act_server_fuse.id)]).unlink()
-                if template.ref_ir_value_fuse:
-                    ir_values_obj = self.env['ir.actions.server']
+                if template.ref_ir_act_window_fuse:
+                    ir_values_obj = self.env['ir.actions.act_window']
                     ir_values_obj.search(
-                        [('id', '=', template.ref_ir_value_fuse.id)]).unlink()
+                        [('id', '=', template.ref_ir_act_window_fuse.id)]).unlink()
             except:
                 raise UserError(_("Deletion of the action record failed."))
         return True
