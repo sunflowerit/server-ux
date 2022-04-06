@@ -9,9 +9,17 @@ from lxml import etree
 
 from odoo import _, api, fields, models, tools
 from odoo.fields import One2many, Many2many, Reference
-from odoo.exceptions import ValidationError, AccessError
+from odoo.exceptions import ValidationError, AccessError, UserError
 
 from ..tools import is_table
+from odoo.tools import mute_logger
+import datetime
+import functools
+import itertools
+import logging
+from ast import literal_eval
+
+import psycopg2
 
 
 class MergeFuseWizardLine(models.TransientModel):
@@ -64,7 +72,6 @@ class MergeFuseWizard(models.TransientModel):
         line_vals = []
 
         for i, active_id in enumerate(active_ids):
-
             line_vals.append((0, False, {
                 'sequence': i,
                 'ref': '{},{}'.format(active_model, str(active_id))
@@ -86,18 +93,20 @@ class MergeFuseWizard(models.TransientModel):
         }
 
     def action_apply(self):
+
         """ Perform the merge when 'Merge' button is pressed """
         self.ensure_one()
         self._assert_permissions()
         records = self.line_ids.sorted(lambda a: a.sequence)
         base_record = records[0].ref
-        to_merge_records = records[1:].mapped('ref')
+        to_merge_records = records[1].ref
         self._do_merge(base_record, to_merge_records)
         self.env.invalidate_all()
         return {'type': 'ir.actions.act_window_close'}
 
     @api.model
     def _do_sql_updates(self, table, ids, updates):
+
         query = 'UPDATE "%s" SET %s WHERE id IN %%s' % (
             table,
             ','.join('"%s"=%s' % (u[0], u[1]) for u in updates),
@@ -190,11 +199,15 @@ class MergeFuseWizard(models.TransientModel):
                         target_records[0].sudo().write({
                             target_field_name: [(4, base_record.id)]})
                     else:
-                        updates = {(target_field_name, base_record.id)}
+                        """This is a not so good method of syncing the new value of id from postgres"""
+                        updates = (target_field_name, base_record.id)
+                        y = list(updates)  # convert to list
+                        y[1] = y[1] + 1  # Extract id and update by incrementing id by 1
+                        updates = {tuple(y)}  # convert back to a tuple
                         self._do_sql_updates(
                             target_model._table, target_records.ids, updates)
         # delete records
-        self.env.invalidate_all()
+        # self.env.invalidate_all()
         to_merge_records.unlink()
 
         # If products not same company, set them to same company before merging
