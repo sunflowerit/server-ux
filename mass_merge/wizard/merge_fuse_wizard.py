@@ -24,6 +24,13 @@ _logger = logging.getLogger("merge.fuse.wizard")
 import psycopg2
 
 
+class MergeDummy(models.TransientModel):
+    _name = "merge.dummy"
+    _description = "Merge Object Dummy"
+
+    name = fields.Char()
+
+
 class MergeFuseWizardLine(models.TransientModel):
     _name = 'merge.fuse.wizard.line'
     _order = 'sequence asc'

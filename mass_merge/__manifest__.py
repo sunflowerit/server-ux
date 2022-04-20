@@ -13,7 +13,7 @@
     "website": "http://www.serpentcs.com",
     "license": "AGPL-3",
     'depends': [
-        'base'
+        'base', 'stock'
     ],
     'data': [
         'security/merge_security.xml',
