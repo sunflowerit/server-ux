@@ -6,3 +6,13 @@
 "record_line_merge_manager","record.merge.id.line","model_record_merge_id_line","mass_merge.group_merge_editing",1,1,1,1
 "merge_fuse_wizard","merge.fuse.wizard","model_merge_fuse_wizard","mass_merge.group_merge_editing",1,1,1,1
 "merge_fuse_wizardline","merge.fuse.wizard.line","model_merge_fuse_wizard_line","mass_merge.group_merge_editing",1,1,1,1
+"record_merge_nonrel_field","record.merge.nonrel.field","model_record_merge_nonrel_field","mass_merge.group_merge_editing",1,1,1,1
+"record_merge_ref_field","record.merge.ref.field","model_record_merge_ref_field","mass_merge.group_merge_editing",1,1,1,1
+"record_merge_fk_field","record.merge.fk.field","model_record_merge_fk_field","mass_merge.group_merge_editing",1,1,1,1
+"record_merge_consolidate_field","record.merge.consolidate.field","model_record_merge_consolidate_field","mass_merge.group_merge_editing",1,1,1,1
+"record_merge_mixin_field_line","record.merge.mixin.field.line","model_record_merge_mixin_field_line","mass_merge.group_merge_editing",1,1,1,1
+"record_merge_rec_field","record.merge.rec.field","model_record_merge_rec_field","mass_merge.group_merge_editing",1,1,1,1
+"record_merge_id_delete","record.merge.id.delete","model_record_merge_id_delete","mass_merge.group_merge_editing",1,1,1,1
+"record_merge_consolidate_order","record.merge.consolidate.order","model_record_merge_consolidate_order","mass_merge.group_merge_editing",1,1,1,1
+"record_merge_relation_field","record.merge.relation.field","model_record_merge_relation_field","mass_merge.group_merge_editing",1,1,1,1
+"record_merge_criteria_group","record.merge.criteria.group","model_record_merge_criteria_group","mass_merge.group_merge_editing",1,1,1,1
