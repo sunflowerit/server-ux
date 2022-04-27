@@ -527,7 +527,7 @@ class RecordMergeIdLine(models.Model):
         if self.destiny:
             self.merge_id.id_line_ids.filtered(
                 lambda l: l.id != self.id
-            ).write({'destiny': False})
+            ).write({'destiny': True})
 
 
 class RecordMergeRelationField(models.Model):
