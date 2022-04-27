@@ -63,7 +63,7 @@ class RecordMergeMixin(models.AbstractModel):
                     })
                 )
             merge.consolidate_field_ids.unlink()
-            merge.consolidate_field_ids = lines
+            # merge.consolidate_field_ids = lines
 
     def fill_fk_field(self):
         """
@@ -183,7 +183,7 @@ class RecordMergeMixin(models.AbstractModel):
                     )
 
             merge.ref_field_ids.unlink()
-            merge.ref_field_ids = lines
+            # merge.ref_field_ids = lines
 
     def fill_nonrel_field(self):
         """
@@ -253,7 +253,7 @@ class RecordMergeMixin(models.AbstractModel):
         for merge in self.filtered(lambda m: m.state=='progress'):
             lines = []
             model_id = merge.model_id
-            computed_fields = self.env[model_id.model]._field_computed
+            computed_fields = self.env.fields_to_compute()
             stored_fields = [f.name for f in computed_fields if f.store]
             for sf in stored_fields:
                 field_id = model_id.field_id.filtered(lambda f: f.name == sf)
