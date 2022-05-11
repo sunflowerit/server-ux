@@ -7,9 +7,9 @@ from odoo import fields, models
 class BaseMergeModelLine(models.Model):
 
     _name = 'base.merge.model.line'
+    _description = 'Base Merge Model Line'
 
-    merge_model_id = fields.Many2one(
-        required=True)
+    merge_model_id = fields.Many2one('base.merge.model', required=True)
     field_id = fields.Many2one(
         comodel_name='ir.model.fields',
         ondelete='cascade',

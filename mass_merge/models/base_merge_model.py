@@ -10,6 +10,7 @@ from odoo import _, api, fields, models
 class BaseMergeModel(models.Model):
 
     _name = 'base.merge.model'
+    _description = 'Base Merge Model'
 
     _sql_constraints = [
         (

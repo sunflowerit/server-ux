@@ -54,30 +54,30 @@ class RecordMergeCriteria(models.Model):
         fills up the merge groups
         :return:
         """
-        for merge in self.filtered(lambda m: m.state=='progress'):
+        for merge in self.filtered(lambda m: m.state == 'progress'):
             model_id = merge.model_id
             model_obj = self.env[model_id.model]
             records = merge.get_records_to_merge()
             group_dict = {}
             for r in records:
-                key = eval(merge.key,{'o': r})
+                key = eval(merge.key, {'o': r})
                 group_dict.setdefault(key, []).append(r.id)
             merge.group_ids.unlink()
             lines = []
             for ids in group_dict.values():
-                if len(ids)>1:
+                if len(ids) > 1:
                     destiny_record = model_obj.search(
                         [('id', 'in', ids)],
                         order=merge.order or model_obj._order,
                         limit=1
                     )
-                    lines.append( (0, 0, {
-                            'record_id': destiny_record.id,
-                            'line_ids': [ (0, 0, {
-                                'record_id': x
-                            }) for x in ids]
-                        })
-                    )
+                    lines.append((0, 0, {
+                        'record_id': destiny_record.id,
+                        'line_ids': [(0, 0, {
+                            'record_id': x
+                        }) for x in ids]
+                    })
+                                 )
             merge.group_ids = lines
 
     def create_merges(self):
@@ -95,7 +95,7 @@ class RecordMergeCriteria(models.Model):
             for group in merge.group_ids.filtered(lambda g: g.to_merge):
                 lines = []
                 for l in group.line_ids:
-                    lines.append( (0, 0, {
+                    lines.append((0, 0, {
                         'record_id': l.record_id,
                         'destiny': (l.record_id == group.record_id),
                     }))
