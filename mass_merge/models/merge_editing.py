@@ -7,7 +7,7 @@ from odoo.exceptions import UserError
 class MergeObject(models.Model):
     _name = "merge.object"
 
-    name = fields.Char("Name", size=64, required=True, index=True)
+    name = fields.Char("Name", required=True, index=True)
     model_id = fields.Many2one('ir.model', 'Model', required=True, index=True, ondelete='cascade')
     ref_ir_act_server_fuse = fields.Many2one(
         'ir.actions.server',
