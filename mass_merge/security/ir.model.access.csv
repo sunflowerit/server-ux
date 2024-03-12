@@ -4,7 +4,6 @@
 "criteria_merge_manager","record.merge.criteria","model_record_merge_criteria","mass_merge.group_merge_editing",1,1,1,1
 "mixin_merge_manager","record.merge.mixin","model_record_merge_mixin","mass_merge.group_merge_editing",1,1,1,1
 "record_line_merge_manager","record.merge.id.line","model_record_merge_id_line","mass_merge.group_merge_editing",1,1,1,1
-"merge_manager","merge.object","model_merge_object","mass_merge.group_merge_editing",1,1,1,1
 "merge_fuse_wizard","merge.fuse.wizard","model_merge_fuse_wizard","mass_merge.group_merge_editing",1,1,1,1
 "merge_fuse_wizardline","merge.fuse.wizard.line","model_merge_fuse_wizard_line","mass_merge.group_merge_editing",1,1,1,1
 "record_merge_nonrel_field","record.merge.nonrel.field","model_record_merge_nonrel_field","mass_merge.group_merge_editing",1,1,1,1
@@ -17,3 +16,8 @@
 "record_merge_consolidate_order","record.merge.consolidate.order","model_record_merge_consolidate_order","mass_merge.group_merge_editing",1,1,1,1
 "record_merge_relation_field","record.merge.relation.field","model_record_merge_relation_field","mass_merge.group_merge_editing",1,1,1,1
 "record_merge_criteria_group","record.merge.criteria.group","model_record_merge_criteria_group","mass_merge.group_merge_editing",1,1,1,1
+access_record_merge_criteria_group_line,access_record_merge_criteria_group_line,model_record_merge_criteria_group_line,mass_merge.group_merge_editing,1,1,1,1
+access_base_merge_model,access_base_merge_model,model_base_merge_model,mass_merge.group_merge_editing,1,1,1,1
+access_base_merge_model_line,access_base_merge_model_line,model_base_merge_model_line,mass_merge.group_merge_editing,1,1,1,1
+access_merge_dummy,access_merge_dummy,model_merge_dummy,mass_merge.group_merge_editing,1,1,1,1
+access_base_merge_wizard,access_base_merge_wizard,model_base_merge_wizard,mass_merge.group_merge_editing,1,1,1,1

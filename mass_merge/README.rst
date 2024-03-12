@@ -6,16 +6,9 @@ Mass Merge Records
 ==================
 This module is a general purpose module that merges records that may be similar
 or reflect similar properties when created.
-<<<<<<< HEAD
-Merges any number of records from any table. Similar to the base_partner_merge functionality,
-but with any table and with an interfaces that permits partial merges.
-=======
-
 Merges any number of records from any table. Similar to the base_partner_merge functionality,
 but with any table and with an interfaces that permits partial merges.
 
-
->>>>>>> 3833506c ([ADD]Technical feature to merge records from any table (feature from module=record_merge))
 Considerations
 --------------
 

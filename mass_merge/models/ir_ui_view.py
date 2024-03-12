@@ -1,12 +1,10 @@
-# -*- coding: utf-8 -*-
-# © 2020 Therp BV <https://therp.nl>
+# Copyright 2020 Therp BV <https://therp.nl>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl.html).
 from odoo import models
-from odoo.addons.base.models.ir_ui_view import NameManager
 
 
 class View(models.Model):
-    _inherit = 'ir.ui.view'
+    _inherit = "ir.ui.view"
 
     def postprocess(self, node, current_node_path, editable, name_manager):
 
@@ -14,5 +12,6 @@ class View(models.Model):
             node=node,
             current_node_path=current_node_path,
             editable=editable,
-            name_manager=name_manager)
+            name_manager=name_manager,
+        )
         return result
