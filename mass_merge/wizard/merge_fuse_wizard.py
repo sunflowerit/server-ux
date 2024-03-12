@@ -20,7 +20,14 @@ class MergeFuseWizardLine(models.TransientModel):
 
     wizard_id = fields.Many2one('merge.fuse.wizard')
     sequence = fields.Integer()
-    ref = fields.Reference(selection=[], readonly=True)
+    ref = fields.Reference(selection='_reference_models', readonly=True)
+
+    @api.model
+    def _reference_models(self):
+        models = self.env['ir.model'].sudo().search([('state', '!=', 'manual')])
+        return [(model.model, model.name)
+                for model in models
+                if not model.model.startswith('ir.')]
 
 
 class MergeFuseWizard(models.TransientModel):
@@ -33,6 +40,8 @@ class MergeFuseWizard(models.TransientModel):
         """ Raise if the current user doesn't have permissions to merge """
 
         if self.env.user.has_group('mass_merge.group_merge_editing'):
+            return True
+        else:
             raise AccessError(_("You don't have the access rights to do that"))
 
         # Below Worked on version 10, record returns None on version 14 thus fixed this with above code using groups
@@ -53,14 +62,16 @@ class MergeFuseWizard(models.TransientModel):
             raise ValidationError(
                 'You must choose at least two records.')
         line_vals = []
+
         for i, active_id in enumerate(active_ids):
+
             line_vals.append((0, False, {
-                'sequence': i
-                # TODO fix value error for ref field
-                # 'ref': '{},{}'.format(active_model, str(active_id))
+                'sequence': i,
+                'ref': '{},{}'.format(active_model, str(active_id))
             }))
 
         res = self.create({'line_ids': line_vals})
+
         res._assert_permissions()
         return {
             'name': _('Merge records ({})').format(active_model),
