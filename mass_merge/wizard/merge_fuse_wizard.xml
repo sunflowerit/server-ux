@@ -28,10 +28,7 @@
     <record model="ir.actions.act_window" id="action_merge_fuse_wizard_form">
         <field name="name">Mass Merge Wizard</field>
         <field name="res_model">merge.fuse.wizard</field>
-<<<<<<< HEAD
-=======
         <field name="view_type">form</field>
->>>>>>> ed3987d6 ([ADD] mass_merge)
         <field name="view_mode">form</field>
         <field name="view_id" ref="view_merge_fuse_wizard_form"/>
     </record>
