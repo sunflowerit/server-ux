@@ -1,27 +1,21 @@
-# coding: utf-8
 #   OpenERP, Open Source Management Solution
 #   Copyright (C) 2012 Serpent Consulting Services (<http://www.serpentcs.com>)
 #   Copyright (C) 2010-Today OpenERP SA (<http://www.openerp.com>)
 #   Copyright (C) 2019 Sunflower IT (<https://www.sunflower>)
 #   License GNU General Public License see <http://www.gnu.org/licenses/>
 
-from lxml import etree
 
-from odoo import _, api, fields, models, tools
-from odoo.fields import One2many, Many2many, Reference
-from odoo.exceptions import ValidationError, AccessError, UserError
-
-from ..tools import is_table
-from odoo.tools import mute_logger
-import datetime
 import functools
 import itertools
 import logging
-from ast import literal_eval
-
-_logger = logging.getLogger("merge.fuse.wizard")
 
 import psycopg2
+
+from odoo import _, api, fields, models
+from odoo.exceptions import AccessError, ValidationError
+from odoo.tools import mute_logger
+
+_logger = logging.getLogger("merge.fuse.wizard")
 
 
 class MergeDummy(models.TransientModel):
@@ -32,42 +26,47 @@ class MergeDummy(models.TransientModel):
 
 
 class MergeFuseWizardLine(models.TransientModel):
-    _name = 'merge.fuse.wizard.line'
-    _order = 'sequence asc'
+    _name = "merge.fuse.wizard.line"
+    _order = "sequence asc"
+    _description = "Merge Fuse wizard lines"
 
-    wizard_id = fields.Many2one('merge.fuse.wizard')
+    wizard_id = fields.Many2one("merge.fuse.wizard")
     sequence = fields.Integer()
-    ref = fields.Reference(selection='_reference_models', readonly=True)
+    ref = fields.Reference(selection="_reference_models", readonly=True)
 
     @api.model
     def _reference_models(self):
-        models = self.env['ir.model'].sudo().search([('state', '!=', 'manual')])
-        return [(model.model, model.name)
-                for model in models
-                if not model.model.startswith('ir.')]
+        models = self.env["ir.model"].sudo().search([("state", "!=", "manual")])
+        return [
+            (model.model, model.name)
+            for model in models
+            if not model.model.startswith("ir.")
+        ]
 
 
 class MergeFuseWizard(models.TransientModel):
-    _name = 'merge.fuse.wizard'
+    _name = "merge.fuse.wizard"
+    _description = "Merge Fuse Wizard"
 
     _model_merge = "merge.dummy"
     _table_merge = "merge_dummy"
 
-    line_ids = fields.One2many('merge.fuse.wizard.line', 'wizard_id')
+    line_ids = fields.One2many("merge.fuse.wizard.line", "wizard_id")
 
     object_ids = fields.Many2many(_model_merge, string="Objects")
     dst_object_id = fields.Many2one(_model_merge, string="Destination Object")
 
     @api.model
     def _assert_permissions(self):
-        """ Raise if the current user doesn't have permissions to merge """
+        """Raise if the current user doesn't have permissions to merge"""
 
-        if self.env.user.has_group('mass_merge.group_merge_editing'):
+        if self.env.user.has_group("mass_merge.group_merge_editing"):
             return True
         else:
             raise AccessError(_("You don't have the access rights to do that"))
 
-        # Below Worked on version 10, record returns None on version 14 thus fixed this with above code using groups
+        # Below Worked on version 10, record returns None
+        # on version 14 thus fixed this with above code using groups
 
         # record = self.line_ids[1].ref
         # try:
@@ -78,45 +77,50 @@ class MergeFuseWizard(models.TransientModel):
 
     @api.model
     def _get_wizard_action(self):
-        """ Action that opens a merge wizard for active_model/active_ids """
-        active_model = self.env.context.get('active_model')
-        active_ids = self.env.context.get('active_ids')
+        """Action that opens a merge wizard for active_model/active_ids"""
+        active_model = self.env.context.get("active_model")
+        active_ids = self.env.context.get("active_ids")
         if not active_model or not active_ids or len(active_ids) < 2:
-            raise ValidationError(
-                'You must choose at least two records.')
+            raise ValidationError(_("You must choose at least two records."))
         line_vals = []
 
         for i, active_id in enumerate(active_ids):
-            line_vals.append((0, False, {
-                'sequence': i,
-                'ref': '{},{}'.format(active_model, str(active_id))
-            }))
+            line_vals.append(
+                (
+                    0,
+                    False,
+                    {
+                        "sequence": i,
+                        "ref": "{},{}".format(active_model, str(active_id)),
+                    },
+                )
+            )
 
-        res = self.create({'line_ids': line_vals})
+        res = self.create({"line_ids": line_vals})
 
         res._assert_permissions()
         return {
-            'name': _('Merge records ({})').format(active_model),
-            'type': 'ir.actions.act_window',
-            'res_model': 'merge.fuse.wizard',
-            'res_id': res.id,
-            'src_model': active_model,
-            'view_type': 'form',
-            'view_mode': 'form,tree',
-            'target': 'new',
-            'flags': {'action_buttons': False},
+            "name": _("Merge records ({})").format(active_model),
+            "type": "ir.actions.act_window",
+            "res_model": "merge.fuse.wizard",
+            "res_id": res.id,
+            "src_model": active_model,
+            "view_type": "form",
+            "view_mode": "form,tree",
+            "target": "new",
+            "flags": {"action_buttons": False},
         }
-    @api.multi
+
     def action_apply(self):
 
-        """ Perform the merge when 'Merge' button is pressed """
+        """Perform the merge when 'Merge' button is pressed"""
         self.ensure_one()
         self._assert_permissions()
         records = self.line_ids.sorted(lambda a: a.sequence)
         base_record = records[0].ref
         to_merge_records = records[1].ref
         self._merge(to_merge_records, base_record)
-        return {'type': 'ir.actions.act_window_close'}
+        return {"type": "ir.actions.act_window_close"}
 
     def _merge(self, object_ids, dst_object=None, extra_checks=True):
         """private implementation of merge object
@@ -137,12 +141,16 @@ class MergeFuseWizard(models.TransientModel):
 
     @api.model
     def _update_foreign_keys(self, src_objects, dst_object):
-        """Update all foreign key from the src_object to dst_object. All many2one fields will be updated.
-        :param src_objects : merge source res.object recordset (does not include destination one)
+        """Update all foreign key from the src_object to dst_object.
+           All many2one fields will be updated.
+        :param src_objects : merge source res.object recordset
+            (does not include destination one)
         :param dst_object : record of destination res.object
         """
         _logger.debug(
-            "_update_foreign_keys for dst_object: %s for src_objects: %s", dst_object.id, str(src_objects.ids)
+            "_update_foreign_keys for dst_object: %s for src_objects: %s",
+            dst_object.id,
+            str(src_objects.ids),
         )
 
         # find the many2one relation to a object
@@ -157,7 +165,10 @@ class MergeFuseWizard(models.TransientModel):
 
             # get list of columns of current table (exept the current fk column)
             # pylint: disable=E8103
-            query = "SELECT column_name FROM information_schema.columns WHERE table_name LIKE '%s'" % (table)
+            query = (
+                "SELECT column_name FROM information_schema.columns WHERE table_name LIKE '%s'"
+                % (table)
+            )
             self._cr.execute(query, ())
             columns = []
             for data in self._cr.fetchall():
@@ -188,11 +199,16 @@ class MergeFuseWizard(models.TransientModel):
                     % query_dic
                 )
                 for src_object in src_objects:
-                    self._cr.execute(query, (dst_object.id, src_object.id, dst_object.id))
+                    self._cr.execute(
+                        query, (dst_object.id, src_object.id, dst_object.id)
+                    )
             else:
                 try:
                     with mute_logger("odoo.sql_db"), self._cr.savepoint():
-                        query = 'UPDATE "%(table)s" SET "%(column)s" = %%s WHERE "%(column)s" IN %%s' % query_dic
+                        query = (
+                            'UPDATE "%(table)s" SET "%(column)s" = %%s '
+                            'WHERE "%(column)s" IN %%s' % query_dic
+                        )
                         self._cr.execute(
                             query,
                             (
@@ -222,13 +238,17 @@ class MergeFuseWizard(models.TransientModel):
                 except psycopg2.Error:
                     # updating fails, most likely due to a violated unique constraint
                     # keeping record with nonexistent object_id is useless, better delete it
-                    query = 'DELETE FROM "%(table)s" WHERE "%(column)s" IN %%s' % query_dic
+                    query = (
+                        'DELETE FROM "%(table)s" WHERE "%(column)s" IN %%s' % query_dic
+                    )
                     self._cr.execute(query, (tuple(src_objects.ids),))
 
         self.invalidate_cache()
+
     def _get_summable_fields(self):
         """Returns the list of fields that should be summed when merging objects"""
         return []
+
     def _get_fk_on(self, table):
         """return a list of many2one relation with the given table.
         :param table : the name of the sql table to return relations
@@ -256,18 +276,27 @@ class MergeFuseWizard(models.TransientModel):
     @api.model
     def _update_reference_fields(self, src_objects, dst_object):
         """Update all reference fields from the src_object to dst_object.
-        :param src_objects : merge source res.object recordset (does not include destination one)
+        :param src_objects : merge source res.object recordset
+            (does not include destination one)
         :param dst_object : record of destination res.object
         """
-        _logger.debug("_update_reference_fields for dst_object: %s for src_objects: %r", dst_object.id, src_objects.ids)
+        _logger.debug(
+            "_update_reference_fields for dst_object: %s for src_objects: %r",
+            dst_object.id,
+            src_objects.ids,
+        )
 
         def update_records(model, src, field_model="model", field_id="res_id"):
             Model = self.env[model] if model in self.env else None
             if Model is None:
                 return
-            records = Model.sudo().search([(field_model, "=", self._model_merge), (field_id, "=", src.id)])
+            records = Model.sudo().search(
+                [(field_model, "=", self._model_merge), (field_id, "=", src.id)]
+            )
             try:
-                with mute_logger("odoo.sql_db"), self._cr.savepoint(), self.env.clear_upon_failure():
+                with mute_logger(
+                    "odoo.sql_db"
+                ), self._cr.savepoint(), self.env.clear_upon_failure():
                     records.sudo().write({field_id: dst_object.id})
                     records.flush()
             except psycopg2.Error:
@@ -301,7 +330,9 @@ class MergeFuseWizard(models.TransientModel):
                 continue
 
             for src_object in src_objects:
-                records_ref = Model.sudo().search([(record.name, "=", "%s,%d" % (self._model_merge, src_object.id))])
+                records_ref = Model.sudo().search(
+                    [(record.name, "=", "%s,%d" % (self._model_merge, src_object.id))]
+                )
                 values = {
                     record.name: "%s,%d" % (self._model_merge, dst_object.id),
                 }
@@ -315,7 +346,11 @@ class MergeFuseWizard(models.TransientModel):
         :param src_objects : recordset of source res.object
         :param dst_object : record of destination res.object
         """
-        _logger.debug("_update_values for dst_object: %s for src_objects: %r", dst_object.id, src_objects.ids)
+        _logger.debug(
+            "_update_values for dst_object: %s for src_objects: %r",
+            dst_object.id,
+            src_objects.ids,
+        )
 
         model_fields = dst_object.fields_get().keys()
         summable_fields = self._get_summable_fields()
@@ -347,17 +382,24 @@ class MergeFuseWizard(models.TransientModel):
                 dst_object.write({"parent_id": parent_id})
             except ValidationError:
                 _logger.info(
-                    "Skip recursive object hierarchies for parent_id %s of object: %s", parent_id, dst_object.id
+                    "Skip recursive object hierarchies for parent_id %s of object: %s",
+                    parent_id,
+                    dst_object.id,
                 )
 
     def _log_merge_operation(self, src_objects, dst_object):
-        _logger.info("(uid = %s) merged the objects %r with %s", self._uid, src_objects.ids, dst_object.id)
+        _logger.info(
+            "(uid = %s) merged the objects %r with %s",
+            self._uid,
+            src_objects.ids,
+            dst_object.id,
+        )
 
     @api.model
     def _do_sql_updates(self, table, ids, updates):
 
         query = 'UPDATE "%s" SET %s WHERE id IN %%s' % (
             table,
-            ','.join('"%s"=%s' % (u[0], u[1]) for u in updates),
+            ",".join('"%s"=%s' % (u[0], u[1]) for u in updates),
         )
         self.env.cr.execute(query, (tuple(ids),))
