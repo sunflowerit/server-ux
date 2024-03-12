@@ -4,3 +4,4 @@
 "criteria_merge_manager","record.merge.criteria","model_record_merge_criteria","mass_merge.group_merge_editing",1,1,1,1
 "mixin_merge_manager","record.merge.mixin","model_record_merge_mixin","mass_merge.group_merge_editing",1,1,1,1
 "record_line_merge_manager","record.merge.id.line","model_record_merge_id_line","mass_merge.group_merge_editing",1,1,1,1
+"merge_manager","merge.object","model_merge_object","merge_editing.group_merge_editing",1,1,1,1
