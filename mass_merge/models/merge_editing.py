@@ -9,7 +9,6 @@ class MergeObject(models.Model):
 
     name = fields.Char("Name", size=64, required=True, index=True)
     model_id = fields.Many2one('ir.model', 'Model', required=True, index=True, ondelete='cascade')
-    model_id = fields.Many2one('ir.model', 'Model', required=True, index=True)
     ref_ir_act_server_fuse = fields.Many2one(
         'ir.actions.server',
         'Sidebar fuse server action', readonly=True,
@@ -36,7 +35,6 @@ class MergeObject(models.Model):
                         self.model_list += "," + str(model_ids[0]) + ""
             self.model_list += "]"
 
-
     @api.multi
     def create_action_fuse(self):
         vals = {}
@@ -48,26 +46,19 @@ class MergeObject(models.Model):
                 'name': button_name,
                 'type': 'ir.actions.server',
                 'model_id': self.env.ref(
-                    'merge_editing.model_merge_fuse_wizard').id,
+                    'mass_merge.model_merge_fuse_wizard').id,
                 'state': 'code',
                 'code': 'action = model._get_wizard_action()',
-                'condition': True,
-            })
-            vals['ref_ir_value_fuse'] = self.env['ir.values'].create({
-                'name': button_name,
-                'model': src_obj,
-                'key': 'action',
-                'key2': 'client_action_multi',
-                'value': "ir.actions.server," + str(
-                    vals['ref_ir_act_server_fuse'].id),
+                'binding_model_id': self.env.ref(
+                    'mass_merge.model_merge_fuse_wizard').id,
+                'binding_type': 'report'
+
             })
         self.write({
-            'ref_ir_act_server_fuse': vals.get('ref_ir_act_server_fuse', False).id,
-            'ref_ir_value_fuse': vals.get('ref_ir_value_fuse', False).id,
+            'ref_ir_act_server_fuse': vals.get('ref_ir_act_server_fuse', False).id
         })
         return True
 
-    @api.multi
     def unlink_fuse_action(self):
         for template in self:
             try:

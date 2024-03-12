@@ -66,11 +66,7 @@ class MergeFuseWizard(models.TransientModel):
             'target': 'new',
             'flags': {'action_buttons': False},
         }
-
-<<<<<<< HEAD
-=======
     @api.multi
->>>>>>> ed3987d6 ([ADD] mass_merge)
     def action_apply(self):
         """ Perform the merge when 'Merge' button is pressed """
         self.ensure_one()
@@ -179,7 +175,6 @@ class MergeFuseWizard(models.TransientModel):
                         updates = {(target_field_name, base_record.id)}
                         self._do_sql_updates(
                             target_model._table, target_records.ids, updates)
-<<<<<<< HEAD
         # delete records
         self.env.invalidate_all()
         to_merge_records.unlink()
@@ -219,9 +214,3 @@ class MergeFuseWizard(models.TransientModel):
         else:
             ret = _super(base_record, to_merge_records)
             return ret
-=======
-
-        # delete records
-        self.env.invalidate_all()
-        to_merge_records.unlink()
->>>>>>> ed3987d6 ([ADD] mass_merge)
