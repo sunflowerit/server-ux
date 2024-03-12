@@ -31,13 +31,18 @@ class MergeFuseWizard(models.TransientModel):
     @api.model
     def _assert_permissions(self):
         """ Raise if the current user doesn't have permissions to merge """
-        record = self.line_ids[:1].ref
-        record.ensure_one()
-        try:
-            record.check_access_rights('unlink')
-        except AccessError:
-            raise ValidationError(_(
-                "You need 'delete' permissions on this object to do that."))
+
+        if self.env.user.has_group('mass_merge.group_merge_editing'):
+            raise AccessError(_("You don't have the access rights to do that"))
+
+        # Below Worked on version 10, record returns None on version 14 thus fixed this with above code using groups
+
+        # record = self.line_ids[1].ref
+        # try:
+        #     record.check_access_rights('unlink')
+        # except AccessError:
+        #     raise ValidationError(_(
+        #         "You need 'delete' permissions on this object to do that."))
 
     @api.model
     def _get_wizard_action(self):
@@ -50,9 +55,11 @@ class MergeFuseWizard(models.TransientModel):
         line_vals = []
         for i, active_id in enumerate(active_ids):
             line_vals.append((0, False, {
-                'sequence': i,
-                'ref': '{},{}'.format(active_model, active_id)
+                'sequence': i
+                # TODO fix value error for ref field
+                # 'ref': '{},{}'.format(active_model, str(active_id))
             }))
+
         res = self.create({'line_ids': line_vals})
         res._assert_permissions()
         return {
