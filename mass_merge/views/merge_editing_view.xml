@@ -19,6 +19,8 @@
                                    attrs="{'invisible':[('ref_ir_act_server_fuse','=',False)]}"/>
                             <field name="ref_ir_value_fuse"
                                    attrs="{'invisible':[('ref_ir_act_server_fuse','=',False)]}"/>
+                            <field name="ref_ir_act_window_fuse"
+                                   attrs="{'invisible':[('ref_ir_act_server_fuse','=',False)]}"/>
                             <button name="create_action_fuse"
                                    string="Add fuse sidebar button"
                                    type="object"

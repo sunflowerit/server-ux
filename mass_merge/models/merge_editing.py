@@ -16,9 +16,16 @@ class MergeObject(models.Model):
         available on records of the related document\
         model")
     ref_ir_value_fuse = fields.Many2one(
-        'ir.values', 'Sidebar fuse button',
+        'ir.actions.act_window', 'Sidebar fuse button',
         readonly=True, help="Sidebar button to\
         open the sidebar action")
+    ref_ir_act_window_fuse = fields.Many2one(
+        "ir.actions.act_window",
+        "Sidebar fuse button",
+        readonly=True,
+        help="Sidebar button to\
+        open the sidebar action",
+    )
     model_list = fields.Char('Model List', size=256)
 
     @api.onchange('model_id')
@@ -65,10 +72,10 @@ class MergeObject(models.Model):
                 if template.ref_ir_act_server_fuse:
                     self.env['ir.actions.server'].search(
                         [('id', '=', template.ref_ir_act_server_fuse.id)]).unlink()
-                if template.ref_ir_value_fuse:
-                    ir_values_obj = self.env['ir.values']
+                if template.ref_ir_act_window_fuse:
+                    ir_values_obj = self.env['ir.actions.act_window']
                     ir_values_obj.search(
-                        [('id', '=', template.ref_ir_value_fuse.id)]).unlink()
+                        [('id', '=', template.ref_ir_act_window_fuse.id)]).unlink()
             except:
                 raise UserError(_("Deletion of the action record failed."))
         return True
