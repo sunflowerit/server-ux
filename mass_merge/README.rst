@@ -6,11 +6,8 @@ Mass Merge Records
 ==================
 This module is a general purpose module that merges records that may be similar
 or reflect similar properties when created.
-
 Merges any number of records from any table. Similar to the base_partner_merge functionality,
 but with any table and with an interfaces that permits partial merges.
-
-
 Considerations
 --------------
 
@@ -27,6 +24,7 @@ records into one.
 
 Functional Usage
 ----------------
+<<<<<<< HEAD
 Go to Settings - Manage user - Tick Mass Merge	boolean field to give access.
 Go to Settings - Mass Merge - Mass Merge. Create merge for your chosen model.
 
@@ -86,6 +84,8 @@ With this module all this merge is done in minutes.
 
 Also, this module could be inherited to create interfaces for the final user for a certain model (e.g. product merge).
 
+
+TODO: Put here some functional examples.
 
 Known issues / Roadmap
 ----------------------

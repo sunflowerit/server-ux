@@ -6,4 +6,7 @@
 #   License GNU General Public License see <http://www.gnu.org/licenses/>
 
 from . import merge_fuse_wizard
+<<<<<<< HEAD
 from . import base_merge_wizard
+=======
+>>>>>>> ed3987d6 ([ADD] mass_merge)
