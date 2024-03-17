@@ -12,9 +12,7 @@ class RecordMergeCriteria(models.Model):
     _inherit = ['record.merge.mixin']
 
     domain = fields.Char(string="Filter", required=True)
-    key = fields.Text(string="Group key", required=True,
-                      help="The key that will be used to group the records to merge."
-                           "It is based on the object with variable 'o', e.g. o.name.")
+    key = fields.Text(string="Group key", required=True, help="The key that will be used to group the records to merge. It is based on the object with variable 'o', e.g. o.name.")
     group_ids = fields.One2many(
         comodel_name="record.merge.criteria.group",
         inverse_name="merge_id", string="Merge Groups")
