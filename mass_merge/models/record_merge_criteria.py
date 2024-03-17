@@ -30,12 +30,7 @@ class RecordMergeCriteria(models.Model):
     model_name = fields.Char(string="Model name", related="model_id.model")
 
     merge_relation_id = fields.Many2one('record.merge.relation.field', string="Origin Relation")
-    merge_id = fields.Many2one(
-        'record.merge.id',
-        string="Origin Merge",
-        related="merge_relation_id.merge_id",
-        store=True,
-    )
+    merge_id = fields.Many2one('record.merge.id', string="Origin Merge", related="merge_relation_id.merge_id", store=True)
 
     def get_records_to_merge(self):
         """
