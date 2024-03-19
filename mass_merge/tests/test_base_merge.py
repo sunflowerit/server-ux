@@ -27,21 +27,18 @@ class TestBaseMerge(TransactionCase):
         # And assign these to different partners
         self.partner01 = partner_model.create({
             'name': 'George Partner',
-            'customer': False,
             'is_company': False,
             'type': 'contact',
             'country_id': self.country01.id,
             })
         self.partner02 = partner_model.create({
             'name': 'Bill Partner',
-            'customer': True,
             'is_company': False,
             'type': 'contact',
             'country_id': self.country02.id,
             })
         self.partner03 = partner_model.create({
             'name': 'Sam Partner',
-            'customer': True,
             'is_company': False,
             'type': 'contact',
             'country_id': self.country03.id,
