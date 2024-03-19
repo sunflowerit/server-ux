@@ -3,12 +3,13 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl.html).
 from odoo import _, api, fields, models
 
-    """
-    This class holds configuration about which models are allowed to be merged, 
-    and which fields are to be used to to match   
-    """
-class BaseMergeModel(models.Model):
+"""
+    This class holds configuration about which models are allowed to be merged,
+    and which fields are to be used to to match
+"""
 
+
+class BaseMergeModel(models.Model):
     _name = 'base.merge.model'
     _description = 'Base Merge Model'
 
