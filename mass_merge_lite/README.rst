@@ -26,7 +26,6 @@ records into one.
 Functional Usage
 ----------------
 Go to Settings - Manage user - Tick Mass Merge	boolean field to give access.
-Go to Settings - Mass Merge - Mass Merge. Create merge for your chosen model.
 
 Go to Settings - Technical - Merge records. There are two tools:
 
