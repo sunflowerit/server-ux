@@ -755,14 +755,14 @@ class RecordMergeRelationField(models.Model):
             if not self.criteria_ids:
                 raise ValidationError(_("There are no criteria associated"))
             else:
-                action = self.env["ir.actions.act_window"].for_xml_id(
-                    "record_merge", "record_merge_criteria_act_window"
+                action = self.env.ref(
+                    "mass_merge_lite.record_merge_criteria_act_window"
                 )
+                action = action.read([])[0]
                 action.update(
                     {
                         "res_id": self.criteria_ids.id,
                         "views": [(False, "form")],
-                        "view_type": "form",
                         "view_mode": "form",
                     }
                 )
@@ -772,14 +772,12 @@ class RecordMergeRelationField(models.Model):
             if not self.merge_ids:
                 raise ValidationError(_("There are no merges associated"))
             else:
-                action = self.env["ir.actions.act_window"].for_xml_id(
-                    "record_merge", "record_merge_id_act_window"
-                )
+                action = self.env.ref("mass_merge_lite.record_merge_id_act_window")
+                action = action.read([])[0]
                 action.update(
                     {
                         "res_id": self.merge_ids.id,
                         "views": [(False, "form")],
-                        "view_type": "form",
                         "view_mode": "form",
                     }
                 )
